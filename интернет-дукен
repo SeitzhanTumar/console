@@ -1,0 +1,109 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+// Product класы
+class Product {
+    String name;
+    double price;
+    int quantity;
+
+    public Product(String name, double price, int quantity) {
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
+    public String toString() {
+        return name + " - " + price + " тг (Қалғаны: " + quantity + ")";
+    }
+}
+
+// Cart класы
+class Cart {
+    List<String> items = new ArrayList<>();
+    double total = 0;
+
+    public void addProduct(Product product, int amount) {
+        if (product.quantity >= amount) {
+            items.add(product.name + " x" + amount);
+            total += product.price * amount;
+            product.quantity -= amount;
+            System.out.println(product.name + " себетке қосылды!");
+        } else {
+            System.out.println("Қоймада жеткіліксіз!");
+        }
+    }
+
+    public void showCart() {
+        System.out.println("\n🛒 Себет:");
+        for (String item : items) {
+            System.out.println(item);
+        }
+        System.out.println("Жалпы: " + total + " тг");
+    }
+
+    public void checkout() {
+        System.out.println("\nСатып алу аяқталды!");
+        showCart();
+        items.clear();
+        total = 0;
+    }
+}
+
+// User класы
+class User {
+    String name;
+    Cart cart;
+
+    public User(String name) {
+        this.name = name;
+        this.cart = new Cart();
+    }
+}
+
+// Main класс
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        List<Product> products = new ArrayList<>();
+        products.add(new Product("Телефон", 150000, 5));
+        products.add(new Product("Ноутбук", 400000, 3));
+        products.add(new Product("Құлаққап", 20000, 10));
+
+        User user = new User("Тұмар");
+
+        while (true) {
+            System.out.println("\nТауарлар тізімі:");
+            for (int i = 0; i < products.size(); i++) {
+                System.out.println((i + 1) + ". " + products.get(i));
+            }
+            System.out.println("0. Шығу");
+
+            int choice = sc.nextInt();
+            if (choice == 0) break;
+
+            Product selected = products.get(choice - 1);
+
+            System.out.print("Қанша дана: ");
+            int amount = sc.nextInt();
+
+            user.cart.addProduct(selected, amount);
+
+            System.out.print("Себетті көру (y/n)? ");
+            String see = sc.next();
+            if (see.equals("y")) {
+                user.cart.showCart();
+            }
+
+            System.out.print("Сатып алу (y/n)? ");
+            String buy = sc.next();
+            if (buy.equals("y")) {
+                user.cart.checkout();
+            }
+        }
+
+        sc.close();
+    }
+}
